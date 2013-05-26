@@ -1,3 +1,11 @@
+2013-05-25  careo  <careo@fastmail.fm>
+
+	* HydraEngineController.cs: Add 'primaryModeName' and
+	  'secondaryModeName' configuration options and display those
+	  in the UI. 
+
+	* SmarterGimbal.cs: Comment out debug spam.
+
 2013-05-24  careo  <careo@exsurgent.com>
 
 	* GravityEngineModule.cs: reformat and zero gravity
