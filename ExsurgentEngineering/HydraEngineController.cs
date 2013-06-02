@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-// TODO: render stack icons. some based regular fuel levels, others like 
+// TODO: render stack icons. some based regular fuel levels, others like
 //    intake air do as % of max
+using System.Reflection;
+
 public class HydraEngineController : PartModule
 {
 	public VInfoBox meter;
@@ -18,27 +20,27 @@ public class HydraEngineController : PartModule
        
 	}
 
-	[KSPField(isPersistant=false)]
+	[KSPField (isPersistant = false)]
 	public ConfigNode
 		primaryEngine;
 
-	[KSPField(isPersistant=false)]
+	[KSPField (isPersistant = false)]
 	public ConfigNode
 		secondaryEngine;
 
-	[KSPField(isPersistant=false)]
+	[KSPField (isPersistant = false)]
 	public string
 		primaryModeName = "Primary";
 
-	[KSPField(isPersistant=false)]
+	[KSPField (isPersistant = false)]
 	public string
 		secondaryModeName = "Secondary";
 
-	[KSPField(guiActive=true, isPersistant=true, guiName="Current Mode")]
+	[KSPField (guiActive = true, isPersistant = true, guiName = "Current Mode")]
 	public string
 		currentMode;
 
-	[KSPAction("Switch Engine Mode")]
+	[KSPAction ("Switch Engine Mode")]
 	public void SwitchAction (KSPActionParam param)
 	{
 		SwitchEngine ();
@@ -90,11 +92,17 @@ public class HydraEngineController : PartModule
 		}
 		if (ActiveEngine == null) {
 			if (currentMode == primaryModeName)
-				part.AddModule (primaryEngine);
+				AddEngine (primaryEngine);
 			else
-				part.AddModule (secondaryEngine);
-
+				AddEngine (secondaryEngine);
 		}
+	}
+
+	bool AddEngine (ConfigNode engineConfig)
+	{
+		var module = (ModuleEngines)part.AddModule ("ModuleEngines");
+		module.Load (engineConfig);
+		return true;
 	}
 
 	public ModuleEngines ActiveEngine {
@@ -102,7 +110,7 @@ public class HydraEngineController : PartModule
 
 	}
 
-	[KSPEvent(guiActive=true, guiName="Switch Engine Mode")]
+	[KSPEvent (guiActive = true, guiName = "Switch Engine Mode")]
 	public void SwitchEngine ()
 	{
 		ConfigNode nextEngine;
@@ -138,7 +146,7 @@ public class HydraEngineController : PartModule
 		//ActiveEngine.velocityCurve = new FloatCurve();
 		//ActiveEngine.atmosphereCurve = new FloatCurve();
 
-		//ActiveEngine.OnAwake();
+//		ActiveEngine.OnAwake ();
 		ActiveEngine.Fields.Load (nextEngine);
 
 		if (nextEngine.HasValue ("useVelocityCurve") && (nextEngine.GetValue ("useVelocityCurve").ToLowerInvariant () == "true")) {
@@ -239,19 +247,19 @@ public class HydraEngineController : PartModule
 		Debug.Log (msg);
 
 	}
-//	void CheckPropellantUse ()
-//	{
-//
-////		var msg = "";
-//		foreach (var propellant in ActiveEngine.propellants) {
-//
-//			//                    propellant.name, propellant.currentRequirement, propellant.currentAmount, propellant.isDeprived);
-//			var missing = propellant.currentRequirement - propellant.currentAmount;
-////			msg += String.Format ("propellant: {0} missing:{1}", propellant.name, missing);
-//            
-//		}
-////		Debug.Log (msg);
-//    
-//	}
+	//	void CheckPropellantUse ()
+	//	{
+	//
+	////		var msg = "";
+	//		foreach (var propellant in ActiveEngine.propellants) {
+	//
+	//			//                    propellant.name, propellant.currentRequirement, propellant.currentAmount, propellant.isDeprived);
+	//			var missing = propellant.currentRequirement - propellant.currentAmount;
+	////			msg += String.Format ("propellant: {0} missing:{1}", propellant.name, missing);
+	//
+	//		}
+	////		Debug.Log (msg);
+	//
+	//	}
 }
 
