@@ -100,14 +100,18 @@ public class HydraEngineController : PartModule
 
 	bool AddEngine (ConfigNode engineConfig)
 	{
-		var module = part.AddModule (engineConfig);
+		var module = (ModuleEngines)part.AddModule ("ModuleEngines");
+		
 		// borrowed from https://github.com/Ialdabaoth/ModuleManager/blob/master/moduleManager.cs
 		MethodInfo awakeMethod = typeof(PartModule).GetMethod ("Awake", BindingFlags.Instance | BindingFlags.NonPublic);
 		if (awakeMethod == null)
 			return false;
+	
 
 		object[] paramList = new object[] { };
 		awakeMethod.Invoke(module, paramList);
+		
+		module.Load(engineConfig);
 		return true;
 	}
 

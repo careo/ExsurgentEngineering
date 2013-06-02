@@ -1,5 +1,9 @@
 2013-06-02  careo  <careo@fastmail.fm>
 
+	* HydraEngineController.cs: Rework engine adding a bit more.
+
+2013-06-02  careo  <careo@fastmail.fm>
+
 	* HydraEngineController.cs: Call Awaken() on the created
 	  ModuleEngine.
 
