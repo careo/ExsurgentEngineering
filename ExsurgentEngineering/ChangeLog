@@ -1,3 +1,8 @@
+2013-06-02  careo  <careo@fastmail.fm>
+
+	* HydraEngineController.cs: Run in OnFixedUpdate() instead of
+	  FixedUpdate() so we wait until being activated. 
+
 2013-05-25  careo  <careo@fastmail.fm>
 
 	* HydraEngineController.cs: Add 'primaryModeName' and
