@@ -166,7 +166,7 @@ public class HydraEngineController : PartModule
         
 	}
 
-	public void FixedUpdate ()
+	public override void OnFixedUpdate ()
 	{
 		if (HighLogic.LoadedSceneIsEditor)
 			return;
