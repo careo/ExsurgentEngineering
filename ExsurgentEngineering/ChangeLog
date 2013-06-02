@@ -1,5 +1,10 @@
 2013-06-02  careo  <careo@fastmail.fm>
 
+	* HydraEngineController.cs: Call Awaken() on the created
+	  ModuleEngine.
+
+2013-06-02  careo  <careo@fastmail.fm>
+
 	* HydraEngineController.cs: Run in OnFixedUpdate() instead of
 	  FixedUpdate() so we wait until being activated. 
 

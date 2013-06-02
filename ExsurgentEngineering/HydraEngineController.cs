@@ -5,6 +5,8 @@ using System.Linq;
 
 // TODO: render stack icons. some based regular fuel levels, others like 
 //    intake air do as % of max
+using System.Reflection;
+
 public class HydraEngineController : PartModule
 {
 	public VInfoBox meter;
@@ -90,11 +92,23 @@ public class HydraEngineController : PartModule
 		}
 		if (ActiveEngine == null) {
 			if (currentMode == primaryModeName)
-				part.AddModule (primaryEngine);
+				AddEngine (primaryEngine);
 			else
-				part.AddModule (secondaryEngine);
-
+				AddEngine (secondaryEngine);
 		}
+	}
+
+	bool AddEngine (ConfigNode engineConfig)
+	{
+		var module = part.AddModule (engineConfig);
+		// borrowed from https://github.com/Ialdabaoth/ModuleManager/blob/master/moduleManager.cs
+		MethodInfo awakeMethod = typeof(PartModule).GetMethod ("Awake", BindingFlags.Instance | BindingFlags.NonPublic);
+		if (awakeMethod == null)
+			return false;
+
+		object[] paramList = new object[] { };
+		awakeMethod.Invoke(module, paramList);
+		return true;
 	}
 
 	public ModuleEngines ActiveEngine {
@@ -138,7 +152,7 @@ public class HydraEngineController : PartModule
 		//ActiveEngine.velocityCurve = new FloatCurve();
 		//ActiveEngine.atmosphereCurve = new FloatCurve();
 
-		//ActiveEngine.OnAwake();
+//		ActiveEngine.OnAwake ();
 		ActiveEngine.Fields.Load (nextEngine);
 
 		if (nextEngine.HasValue ("useVelocityCurve") && (nextEngine.GetValue ("useVelocityCurve").ToLowerInvariant () == "true")) {
