@@ -1,5 +1,10 @@
 2013-10-19  careo  <careo@fastmail.fm>
 
+	* SmarterGimbal.cs: Disable roll control if the part was not
+	  placed with symmetry. 
+
+2013-10-19  careo  <careo@fastmail.fm>
+
 	* CrewWalkway.cs: Trash CrewWalkway, it was causing
 	  deprecation warnings in 0.22 anyway.
 

@@ -6,7 +6,6 @@ namespace ExsurgentEngineering
 {
 	public class SmarterGimbal : PartModule
 	{
-
 		[KSPField (isPersistant = false)]
 		public float pitchRange = 10f;
 
@@ -25,10 +24,11 @@ namespace ExsurgentEngineering
 		[KSPField (isPersistant = true)]
 		public bool gimbalLock;
 
-		public Dictionary<Transform,Quaternion> transformsAndRotations = new Dictionary<Transform,Quaternion>();
-		public float currentPitchAngle;
-		public float currentYawAngle;
+		public Dictionary<Transform,Quaternion> transformsAndRotations = new Dictionary<Transform,Quaternion> ();
 
+		public float currentPitchAngle;
+
+		public float currentYawAngle;
 
 		[KSPEvent (guiName = "Free Gimbal", guiActive = true)]
 		public void FreeGimbal ()
@@ -40,7 +40,6 @@ namespace ExsurgentEngineering
 			Events ["LockGimbal"].active = true;
 		}
 
-
 		[KSPEvent (guiName = "Lock Gimbal", guiActive = true)]
 		public void LockGimbal ()
 		{
@@ -50,15 +49,13 @@ namespace ExsurgentEngineering
 			Events ["FreeGimbal"].active = true;
 			Events ["LockGimbal"].active = false;
 
-			foreach (var pair in transformsAndRotations)
-			{
+			foreach (var pair in transformsAndRotations) {
 				var gimbalTransform = pair.Key;
 				var initialRotation = pair.Value;
 
 				gimbalTransform.localRotation = initialRotation;
 			}
 		}
-
 
 		[KSPAction ("Toggle Gimbal")]
 		public void ToggleAction (KSPActionParam param)
@@ -116,6 +113,7 @@ namespace ExsurgentEngineering
 			return 0f;
 
 		}
+
 		public override void OnStart (StartState state)
 		{
 			if (gimbalLock)
@@ -123,14 +121,12 @@ namespace ExsurgentEngineering
 			else
 				FreeGimbal ();
 
-			foreach(var gimbalTransform in part.FindModelTransforms(gimbalTransformName))
-			{
+			foreach (var gimbalTransform in part.FindModelTransforms(gimbalTransformName)) {
 				transformsAndRotations.Add (gimbalTransform, gimbalTransform.localRotation);
 			}
 
 
 		}
-
 
 		public override void OnFixedUpdate ()
 		{
@@ -141,41 +137,36 @@ namespace ExsurgentEngineering
 			if (gimbalLock)
 				return;
 
-			var rollDot = RollAxis ();
-			var rollDotSign = Mathf.Sign(rollDot);
+			var rollAngle = 0f;
+			if (part.symmetryMode > 0) {
+				var rollDot = RollAxis ();
+				var rollDotSign = Mathf.Sign (rollDot);
+
+				var roll = vessel.ctrlState.roll;
+				rollAngle = roll * rollDotSign * pitchRange * -1; // TODO: figure out why the -1 is needed. I didn't think it was'
+
+			}
 
 			var pitchDot = PitchAxis ();
-			var pitchDotSign = Mathf.Sign(pitchDot);
+			var pitchDotSign = Mathf.Sign (pitchDot);
 
 			var yawDot = YawAxis ();
-			var yawDotSign = Mathf.Sign(yawDot);
+			var yawDotSign = Mathf.Sign (yawDot);
+
+			var yaw = vessel.ctrlState.yaw;
+			var yawAngle = yaw * yawRange * yawDotSign;
 
 			var pitch = vessel.ctrlState.pitch;
-			var roll = vessel.ctrlState.roll;
-			var yaw = vessel.ctrlState.yaw;
-
-
 			var pitchAngle = pitch * pitchRange * pitchDotSign;
-			var rollAngle = roll * rollDotSign * pitchRange * -1; // TODO: figure out why the -1 is needed. I didn't think it was'
-
-			var yawAngle = yaw * yawRange * yawDotSign;
 
 			var gimbalAngle = pitchAngle + rollAngle;
 			gimbalAngle = Mathf.Clamp (gimbalAngle, -pitchRange, pitchRange);
-
-//			if (useGimbalResponseSpeed)
-//			{
-//				gimbalAngle = Mathf.Lerp (currentPitchAngle, gimbalAngle, gimbalResponseSpeed * TimeWarp.fixedDeltaTime);
-//				yawAngle = Mathf.Lerp (currentYawAngle, yawAngle, gimbalResponseSpeed * TimeWarp.fixedDeltaTime);
-//			}
-
 
 
 			currentPitchAngle = gimbalAngle;
 			currentYawAngle = yawAngle;
 
-			foreach(var pair in transformsAndRotations)
-			{
+			foreach (var pair in transformsAndRotations) {
 				var gimbalTransform = pair.Key;
 				var initialRotation = pair.Value;
 
@@ -187,8 +178,7 @@ namespace ExsurgentEngineering
 
 				var targetRotation = initialRotation * pitchRotation * yawRotation;
 
-				if (useGimbalResponseSpeed)
-				{
+				if (useGimbalResponseSpeed) {
 					var angle = gimbalResponseSpeed * TimeWarp.fixedDeltaTime;
 					gimbalTransform.localRotation = Quaternion.RotateTowards (gimbalTransform.localRotation, targetRotation, angle);
 				} else {
@@ -200,9 +190,6 @@ namespace ExsurgentEngineering
 			}
 
 		}
-
-
-
 	}
 }
 
