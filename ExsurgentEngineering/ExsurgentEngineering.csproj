@@ -15,7 +15,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>..\..\..\..\..\..\..\Games\KSP_osx\GameData\ExsurgentEngineering\Plugins</OutputPath>
+    <OutputPath>..\..\..\..\..\..\..\Games\KSP_dev\GameData\ExsurgentEngineering\Plugins</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>True</Optimize>
-    <OutputPath>..\..\..\..\..\..\..\Games\KSP_osx\GameData\ExsurgentEngineering\Plugins</OutputPath>
+    <OutputPath>..\..\..\..\..\..\..\Games\KSP_dev\GameData\ExsurgentEngineering\Plugins</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -32,12 +32,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\..\Games\KSP_osx\KSP.app\Contents\Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\..\..\..\Games\KSP_dev\KSP.app\Contents\Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\..\Games\KSP_osx\KSP.app\Contents\Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\..\..\..\Games\KSP_dev\KSP.app\Contents\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Data" />
@@ -52,7 +50,6 @@
     <Compile Include="ModuleFrictionAdjuster.cs" />
     <Compile Include="SolidFuelRamjet.cs" />
     <Compile Include="Transformer.cs" />
-    <Compile Include="CrewWalkway.cs" />
     <Compile Include="SmarterGimbal.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

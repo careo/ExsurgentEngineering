@@ -1,5 +1,9 @@
 2013-10-19  careo  <careo@fastmail.fm>
 
+	* ExsurgentEngineering.csproj: Junk for relocated dev install.
+
+2013-10-19  careo  <careo@fastmail.fm>
+
 	* SmarterGimbal.cs: Disable roll control if the part was not
 	  placed with symmetry. 
 
