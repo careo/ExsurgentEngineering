@@ -5,8 +5,6 @@ using System.Linq;
 
 // TODO: render stack icons. some based regular fuel levels, others like
 //    intake air do as % of max
-using System.Reflection;
-
 public class HydraEngineController : PartModule
 {
 	public VInfoBox meter;
