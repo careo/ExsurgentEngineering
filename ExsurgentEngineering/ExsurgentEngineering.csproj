@@ -55,4 +55,14 @@
     <Compile Include="SmarterGimbal.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <VersionControlPolicy inheritsSet="Mono" />
+          <ChangeLogPolicy UpdateMode="None" inheritsSet="Mono" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>

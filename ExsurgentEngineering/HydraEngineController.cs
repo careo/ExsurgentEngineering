@@ -44,39 +44,9 @@ public class HydraEngineController : PartModule
 		SwitchEngine ();
 	}
 
-	public override void OnAwake ()
-	{
-//		Debug.Log ("OnAwake()");
-	}
-
-	public override void OnActive ()
-	{
-//		Debug.Log ("OnActive()");
-	}
-
-	public override void OnStart (StartState state)
-	{
-//		Debug.Log (String.Format ("OnActive({0})", state));
-	}
-
-	public override void OnInactive ()
-	{
-//		Debug.Log ("OnInactive()");
-	}
-
-	void Log (string format, params object[] args)
-	{
-		Debug.Log (String.Format (format, args));
-
-	}
-
 	public override void OnLoad (ConfigNode node)
 	{
-//		Debug.Log ("OnLoad()");
 
-//		Debug.Log ("ActiveEngine: " + ActiveEngine);
-//		Debug.Log ("current: " + current);
-   
 		if (node.HasNode ("primaryEngine")) {
 			primaryEngine = node.GetNode ("primaryEngine");
 			secondaryEngine = node.GetNode ("secondaryEngine");
@@ -105,7 +75,6 @@ public class HydraEngineController : PartModule
 
 	public ModuleEngines ActiveEngine {
 		get { return (ModuleEngines)part.Modules ["ModuleEngines"]; }
-
 	}
 
 	[KSPEvent (guiActive = true, guiName = "Switch Engine Mode")]
@@ -120,31 +89,18 @@ public class HydraEngineController : PartModule
 			nextEngine = primaryEngine;
 		}
 
-		// swap data
-
 		var engineActive = ActiveEngine.getIgnitionState;
 
-		//ActiveEngine.Actions ["ShutdownAction"].Invoke(new KSPActionParam(KSPActionGroup.None, KSPActionType.Activate));
-
 		ActiveEngine.propellants = new List<ModuleEngines.Propellant> ();
-
 
 		if (meter != null) {
 			part.stackIcon.RemoveInfo (meter);
 			meter = null;
-
 		}
        
-//        part.stackIcon.ClearInfoBoxes();
-
 		ActiveEngine.velocityCurve = new FloatCurve ();
 		ActiveEngine.atmosphereCurve = new FloatCurve ();
 
-		//ActiveEngine.propellants.Clear();
-		//ActiveEngine.velocityCurve = new FloatCurve();
-		//ActiveEngine.atmosphereCurve = new FloatCurve();
-
-//		ActiveEngine.OnAwake ();
 		ActiveEngine.Fields.Load (nextEngine);
 
 		if (nextEngine.HasValue ("useVelocityCurve") && (nextEngine.GetValue ("useVelocityCurve").ToLowerInvariant () == "true")) {
@@ -162,14 +118,9 @@ public class HydraEngineController : PartModule
 		}
 
 		ActiveEngine.SetupPropellant ();
-		//var vboxinfo = part.stackIcon.DisplayInfo();
-		//ActiveEngine.OnStart(PartModule.StartState.PreLaunch);
-		//ActiveEngine.Actions ["ActivateAction"].Invoke(new KSPActionParam(KSPActionGroup.None, KSPActionType.Activate));
-
 
 		if (engineActive)
 			ActiveEngine.Actions ["ActivateAction"].Invoke (new KSPActionParam (KSPActionGroup.None, KSPActionType.Activate));
-        
 	}
 
 	public override void OnFixedUpdate ()
@@ -179,12 +130,7 @@ public class HydraEngineController : PartModule
 
 		if (ActiveEngine == null)
 			return;
-		//LogEngineStats();
 		UpdateStackIcon ();
-
-		//CheckPropellantUse();
-
-
 	}
 
 	VInfoBox SetupMeter ()
@@ -213,7 +159,6 @@ public class HydraEngineController : PartModule
 		foreach (var source in sources) {
 			maxAmt += source.maxAmount;
 			currentAmt += source.amount;
-        
 		}
 
 		var minAmt = (from modules in vessel.Parts 
@@ -222,42 +167,9 @@ public class HydraEngineController : PartModule
                        where p.name == "IntakeAir"
                        select module.ignitionThreshold * p.currentRequirement).Sum ();
         
-
-
-		// linear scale
 		var value = (currentAmt - minAmt) / (maxAmt - minAmt);
-
-		// log scale? maybe?
-
-		//var value = Math.Log(currentAmt - minAmt) / Math.Log(maxAmt - minAmt);
-
 
 		Meter.SetValue ((float)value);
 	}
-
-	void LogEngineStats ()
-	{
-		var msg = "\nengine stats:\n";
-		msg += String.Format ("• finalThrust: {0}\n", ActiveEngine.finalThrust);
-		msg += String.Format ("• requestedThrust: {0}\n", ActiveEngine.requestedThrust);
-		var missing = ActiveEngine.requestedThrust - ActiveEngine.finalThrust;
-		msg += String.Format ("• thrust lost: {0}\n", missing);
-		Debug.Log (msg);
-
-	}
-	//	void CheckPropellantUse ()
-	//	{
-	//
-	////		var msg = "";
-	//		foreach (var propellant in ActiveEngine.propellants) {
-	//
-	//			//                    propellant.name, propellant.currentRequirement, propellant.currentAmount, propellant.isDeprived);
-	//			var missing = propellant.currentRequirement - propellant.currentAmount;
-	////			msg += String.Format ("propellant: {0} missing:{1}", propellant.name, missing);
-	//
-	//		}
-	////		Debug.Log (msg);
-	//
-	//	}
 }
 
