@@ -4,67 +4,62 @@ using System.Collections.Generic;
 
 namespace ExsurgentEngineering
 {
-	public class SmarterGimbal : PartModule
+	public class SmarterGimbal : ModuleGimbal
 	{
 		[KSPField (isPersistant = false)]
 		public float pitchRange = 10f;
 
 		[KSPField (isPersistant = false)]
 		public float yawRange;
+		//		[KSPField (isPersistant = false)]
+		//		new public float gimbalRange;
+		[KSPField (isPersistant = false)]
+		new public String gimbalTransformName;
 
 		[KSPField (isPersistant = false)]
-		public float gimbalRange;
+		new public float gimbalResponseSpeed = 10f;
 
 		[KSPField (isPersistant = false)]
-		public String gimbalTransformName;
-
-		[KSPField (isPersistant = false)]
-		public float gimbalResponseSpeed = 10f;
-
-		[KSPField (isPersistant = false)]
-		public bool useGimbalResponseSpeed;
-
-		[KSPField (isPersistant = true)]
-		public bool gimbalLock;
-
+		new public bool useGimbalResponseSpeed;
+		//		[KSPField (isPersistant = true)]
+		//		new public bool gimbalLock;
 		public Dictionary<Transform,Quaternion> transformsAndRotations = new Dictionary<Transform,Quaternion> ();
 
 		public float currentPitchAngle;
 
 		public float currentYawAngle;
-
-		[KSPEvent (guiName = "Free Gimbal", guiActive = true)]
-		public void FreeGimbal ()
-		{
-			gimbalLock = false;
-			Events ["FreeGimbal"].active = false;
-			Events ["LockGimbal"].active = true;
-		}
-
-		[KSPEvent (guiName = "Lock Gimbal", guiActive = true)]
-		public void LockGimbal ()
-		{
-			gimbalLock = true;
-			Events ["FreeGimbal"].active = true;
-			Events ["LockGimbal"].active = false;
-
-			foreach (var pair in transformsAndRotations) {
-				var gimbalTransform = pair.Key;
-				var initialRotation = pair.Value;
-
-				gimbalTransform.localRotation = initialRotation;
-			}
-		}
-
-		[KSPAction ("Toggle Gimbal")]
-		public void ToggleAction (KSPActionParam param)
-		{
-			if (param.type == KSPActionType.Activate)
-				FreeGimbal ();
-			else
-				LockGimbal ();
-		}
-
+		//		[KSPEvent (guiName = "Free Gimbal", guiActive = true)]
+		//		new public void FreeGimbal ()
+		//		{
+		//			gimbalLock = false;
+		//			Events ["FreeGimbal"].active = false;
+		//			Events ["LockGimbal"].active = true;
+		//		}
+		//
+		//		[KSPEvent (guiName = "Lock Gimbal", guiActive = true)]
+		//		new public void LockGimbal ()
+		//		{
+		//			gimbalLock = true;
+		//			Events ["FreeGimbal"].active = true;
+		//			Events ["LockGimbal"].active = false;
+		//
+		//			foreach (var pair in transformsAndRotations) {
+		//				var gimbalTransform = pair.Key;
+		//				var initialRotation = pair.Value;
+		//
+		//				gimbalTransform.localRotation = initialRotation;
+		//			}
+		//		}
+		//
+		//		[KSPAction ("Toggle Gimbal")]
+		//		new public void ToggleAction (KSPActionParam param)
+		//		{
+		//			if (param.type == KSPActionType.Activate)
+		//				FreeGimbal ();
+		//			else
+		//				LockGimbal ();
+		//		}
+		//
 		public override string GetInfo ()
 		{
 			return String.Format ("Smarter Thrust Vectoring Enabled\n - Pitch: {0}\n - Yaw: {1}", pitchRange, yawRange);
