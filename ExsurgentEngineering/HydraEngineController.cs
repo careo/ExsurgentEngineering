@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
 
 // TODO: render stack icons. some based regular fuel levels, others like
@@ -11,9 +10,7 @@ public class HydraEngineController : PartModule
 
 	public VInfoBox Meter {
 		get {
-			if (meter != null)
-				return meter;
-			return SetupMeter ();
+			return meter ?? SetupMeter ();
 		}
        
 	}
@@ -90,8 +87,8 @@ public class HydraEngineController : PartModule
 		}
 
 		var engineActive = ActiveEngine.getIgnitionState;
-
-		ActiveEngine.propellants = new List<ModuleEngines.Propellant> ();
+		
+		ActiveEngine.propellants = new List<Propellant> ();
 
 		if (meter != null) {
 			part.stackIcon.RemoveInfo (meter);
@@ -102,7 +99,7 @@ public class HydraEngineController : PartModule
 		ActiveEngine.atmosphereCurve = new FloatCurve ();
 
 		ActiveEngine.Fields.Load (nextEngine);
-
+	
 		if (nextEngine.HasValue ("useVelocityCurve") && (nextEngine.GetValue ("useVelocityCurve").ToLowerInvariant () == "true")) {
 			ActiveEngine.velocityCurve.Load (nextEngine.GetNode ("velocityCurve"));
 		} else {
@@ -111,7 +108,7 @@ public class HydraEngineController : PartModule
 
 		foreach (ConfigNode n in nextEngine.nodes) {
 			if (n.name == "PROPELLANT") {
-				var prop = new ModuleEngines.Propellant ();
+				var prop = new Propellant ();
 				prop.Load (n);
 				ActiveEngine.propellants.Add (prop);
 			}
@@ -161,11 +158,11 @@ public class HydraEngineController : PartModule
 			currentAmt += source.amount;
 		}
 
-		var minAmt = (from modules in vessel.Parts 
-                       from module in modules.Modules.OfType<ModuleEngines> () 
-                       from p in module.propellants 
-                       where p.name == "IntakeAir"
-                       select module.ignitionThreshold * p.currentRequirement).Sum ();
+		var minAmt = (from modules in vessel.Parts
+		              from module in modules.Modules.OfType<ModuleEngines> ()
+		              from p in module.propellants
+		              where p.name == "IntakeAir"
+		              select module.ignitionThreshold * p.currentRequirement).Sum ();
         
 		var value = (currentAmt - minAmt) / (maxAmt - minAmt);
 
