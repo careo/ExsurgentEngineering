@@ -54,6 +54,7 @@
     <Compile Include="Transformer.cs" />
     <Compile Include="SmarterGimbal.cs" />
     <Compile Include="CerberusEngineController.cs" />
+    <Compile Include="HeatMonitor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
