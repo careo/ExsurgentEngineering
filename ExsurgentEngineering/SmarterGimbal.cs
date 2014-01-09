@@ -10,7 +10,7 @@ namespace ExsurgentEngineering
 		public float pitchRange = 10f;
 
 		[KSPField (isPersistant = false)]
-		public float yawRange;
+		public float yawRange = 10f;
 
 		[KSPField (isPersistant = false)]
 		new public String gimbalTransformName;
@@ -23,47 +23,9 @@ namespace ExsurgentEngineering
 
 		public Dictionary<Transform,Quaternion> transformsAndRotations = new Dictionary<Transform,Quaternion> ();
 
-		public float currentPitchAngle;
-
-		public float currentYawAngle;
-
 		public override string GetInfo ()
 		{
 			return String.Format ("Smarter Thrust Vectoring Enabled\n - Pitch: {0}\n - Yaw: {1}", pitchRange, yawRange);
-		}
-
-		float RollAxis ()
-		{
-			if (part.rigidbody != null) {
-				var vesselCoM = vessel.findWorldCenterOfMass ();          
-				var partCoM = part.rigidbody.worldCenterOfMass;
-				var dot = Vector3.Dot (vesselCoM - partCoM, vessel.transform.right);
-				return dot;
-			}
-			return 0f;
-		}
-
-		float PitchAxis ()
-		{
-			if (part.rigidbody != null) {
-				var vesselCoM = vessel.findWorldCenterOfMass ();          
-				var partCoM = part.rigidbody.worldCenterOfMass;
-				var dot = Vector3.Dot (vesselCoM - partCoM, vessel.transform.up);
-				return dot;
-			}
-			return 0f;
-		}
-
-		float YawAxis ()
-		{
-			if (part.rigidbody != null) {
-				var vesselCoM = vessel.findWorldCenterOfMass ();          
-				var partCoM = part.rigidbody.worldCenterOfMass;
-				// FIXME: now I'm just guessing at the axis to use
-				var dot = Vector3.Dot (vesselCoM - partCoM, vessel.transform.up);
-				return dot;
-			}
-			return 0f;
 		}
 
 		public override void OnLoad (ConfigNode node)
@@ -98,44 +60,81 @@ namespace ExsurgentEngineering
 			if (gimbalLock)
 				return;
 
-			var rollAngle = 0f;
-			if (part.symmetryMode > 0) {
-				var rollDot = RollAxis ();
-				var rollDotSign = Mathf.Sign (rollDot);
+			var vesselCoM = vessel.findWorldCenterOfMass ();
+			var partCoM = part.rigidbody.worldCenterOfMass;
+			var displacement = vesselCoM - partCoM;
 
-				var roll = vessel.ctrlState.roll;
-				rollAngle = roll * rollDotSign * pitchRange * -1; // TODO: figure out why the -1 is needed. I didn't think it was
-			}
+			// position in front of, or behind,  CoM
+			var pitchYawDot = Vector3.Dot (displacement, vessel.transform.up);
+			var pitchYawSign = Mathf.Sign (pitchYawDot);
 
-			var pitchDot = PitchAxis ();
-			var pitchDotSign = Mathf.Sign (pitchDot);
+			
+//			var rollAngle = 0f;
+//			if (part.symmetryMode > 0) {
+//				var rollDot = RollAxis ();
+//				var rollDotSign = Mathf.Sign (rollDot);
+//
 
-			var yawDot = YawAxis ();
-			var yawDotSign = Mathf.Sign (yawDot);
+//				rollAngle = roll * rollDotSign * pitchRange * -1; // TODO: figure out why the -1 is needed. I didn't think it was
+//			}
+//
 
-			var yaw = vessel.ctrlState.yaw;
-			var yawAngle = yaw * yawRange * yawDotSign;
+			var yawAngle = vessel.ctrlState.yaw * yawRange * pitchYawSign;
+			var pitchAngle = vessel.ctrlState.pitch * pitchRange * pitchYawSign;
+			//var rollAngle = vessel.ctrlState.roll * pitchRange * -1; // TODO: use correct mix of pitch and yaw...
+		
+//			Debug.Log ("yawAngle: " + yawAngle);
+//			Debug.Log ("pitchAngle: " + pitchAngle);
+//			Debug.Log ("rollAngle: " + rollAngle);
 
-			var pitch = vessel.ctrlState.pitch;
-			var pitchAngle = pitch * pitchRange * pitchDotSign;
 
-			var gimbalAngle = pitchAngle + rollAngle;
-			gimbalAngle = Mathf.Clamp (gimbalAngle, -pitchRange, pitchRange);
-
-			currentPitchAngle = gimbalAngle;
-			currentYawAngle = yawAngle;
+//			var gimbalAngle = pitchAngle + rollAngle;
+//			gimbalAngle = Mathf.Clamp (gimbalAngle, -pitchRange, pitchRange);
 
 			foreach (var pair in transformsAndRotations) {
 				var gimbalTransform = pair.Key;
 				var initialRotation = pair.Value;
 
-				var localUp = gimbalTransform.InverseTransformDirection (vessel.ReferenceTransform.right);
-				var localRight = gimbalTransform.InverseTransformDirection (vessel.ReferenceTransform.forward);
+				var yawAxis = gimbalTransform.InverseTransformDirection (vessel.ReferenceTransform.forward);
+				var pitchAxis = gimbalTransform.InverseTransformDirection (vessel.ReferenceTransform.right);
 
-				var pitchRotation = Quaternion.AngleAxis (gimbalAngle, localUp);
-				var yawRotation = Quaternion.AngleAxis (yawAngle, localRight);
 
-				var targetRotation = initialRotation * pitchRotation * yawRotation;
+//				if (Vector3.Dot(part.transform.position.normalized, vessel.ReferenceTransform.right) < 0) // below 0 means the engine is on the left side of the craft
+			
+
+//				var rollAxis = gimbalTransform.InverseTransformDirection (new Vector3 (displacement.x, displacement.y));
+
+				
+// roll axis will be some mix of pitch and yaw. 
+				// if engines are positioned like jets... then it will indeed be the pitch axis....
+				// and we can just add the angle...., modified by dot product sign....
+
+				// if the engines are positioned at right angles, we add roll to yaw... ... modified by dot product sign
+
+				// if the engines are halfway... we mix. 
+
+				// if the engines are left and right, the roll axis is the pitch axis...
+				// dot product at 90 degrees is 0.
+			
+				// cross pitch axis and displacement of part to CoM... 
+
+
+//				var rollAxis = gimbalTransform.InverseTransformDirection (displacement);
+
+//				Debug.Log ("yawAxis: " + yawAxis);
+//				Debug.Log ("pitchAxis: " + pitchAxis);
+//				Debug.Log ("rollAxis: " + rollAxis);
+
+				var yawRotation = Quaternion.AngleAxis (yawAngle, yawAxis);
+				var pitchRotation = Quaternion.AngleAxis (pitchAngle, pitchAxis);
+				var rollRotation = Quaternion.AngleAxis (rollAngle, rollAxis);
+
+//				Debug.Log ("yawRotation: " + yawRotation.eulerAngles);
+//				Debug.Log ("pitchRotation: " + pitchRotation.eulerAngles);
+//				Debug.Log ("rollRotation: " + rollRotation.eulerAngles);
+
+				var targetRotation = initialRotation * pitchRotation * yawRotation * rollRotation;
+//				Debug.Log ("targetRotation: " + targetRotation.eulerAngles);
 
 				if (useGimbalResponseSpeed) {
 					var angle = gimbalResponseSpeed * TimeWarp.fixedDeltaTime;
