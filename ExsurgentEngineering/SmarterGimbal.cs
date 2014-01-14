@@ -23,6 +23,8 @@ namespace ExsurgentEngineering
 
 		public Dictionary<Transform,Quaternion> transformsAndRotations = new Dictionary<Transform,Quaternion> ();
 
+		public Dictionary<Transform,GameObject> transformsAndAxesThingies = new Dictionary<Transform,GameObject> ();
+
 		public override string GetInfo ()
 		{
 			return String.Format ("Smarter Thrust Vectoring Enabled\n - Pitch: {0}\n - Yaw: {1}", pitchRange, yawRange);
@@ -48,6 +50,16 @@ namespace ExsurgentEngineering
 			foreach (var gimbalTransform in part.FindModelTransforms(gimbalTransformName)) {
 				transformsAndRotations.Add (gimbalTransform, gimbalTransform.localRotation);
 			}
+		
+		}
+
+		public override void OnUpdate ()
+		{
+			DrawAxes ();
+		}
+
+		void DrawAxes ()
+		{
 		}
 
 		public override void OnFixedUpdate ()
@@ -68,12 +80,12 @@ namespace ExsurgentEngineering
 			var pitchYawDot = Vector3.Dot (displacement, vessel.transform.up);
 			var pitchYawSign = Mathf.Sign (pitchYawDot);
 
-			
+//			
 //			var rollAngle = 0f;
 //			if (part.symmetryMode > 0) {
 //				var rollDot = RollAxis ();
 //				var rollDotSign = Mathf.Sign (rollDot);
-//
+////
 
 //				rollAngle = roll * rollDotSign * pitchRange * -1; // TODO: figure out why the -1 is needed. I didn't think it was
 //			}
@@ -81,7 +93,9 @@ namespace ExsurgentEngineering
 
 			var yawAngle = vessel.ctrlState.yaw * yawRange * pitchYawSign;
 			var pitchAngle = vessel.ctrlState.pitch * pitchRange * pitchYawSign;
-			//var rollAngle = vessel.ctrlState.roll * pitchRange * -1; // TODO: use correct mix of pitch and yaw...
+
+			// Need to apply this as a modification of yaw and pitch angles...
+			var rollAngle = vessel.ctrlState.roll * pitchRange * -1; // TODO: use correct mix of pitch and yaw...
 		
 //			Debug.Log ("yawAngle: " + yawAngle);
 //			Debug.Log ("pitchAngle: " + pitchAngle);
@@ -99,10 +113,16 @@ namespace ExsurgentEngineering
 				var pitchAxis = gimbalTransform.InverseTransformDirection (vessel.ReferenceTransform.right);
 
 
+				var displacement2 = gimbalTransform.InverseTransformDirection (displacement).normalized;
 //				if (Vector3.Dot(part.transform.position.normalized, vessel.ReferenceTransform.right) < 0) // below 0 means the engine is on the left side of the craft
-			
+//				var yawDot = Vector3.Dot (displacement2, yawAxis.normalized);
+//				var pitchDot = Vector3.Dot (displacement2, pitchAxis.normalized);
 
-//				var rollAxis = gimbalTransform.InverseTransformDirection (new Vector3 (displacement.x, displacement.y));
+//				Debug.Log (String.Format ("displacement2: {0} magnitude: {1}", displacement2, displacement2.magnitude));
+//				Debug.Log ("yawDot: " + yawDot);
+//				Debug.Log ("pitchDot: " + pitchDot);
+
+				var rollAxis = gimbalTransform.InverseTransformDirection (new Vector3 (displacement.x, displacement.y));
 
 				
 // roll axis will be some mix of pitch and yaw. 
