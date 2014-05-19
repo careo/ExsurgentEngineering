@@ -25,4 +25,14 @@ Icon
 *.resources
 test-results/
 
-ExsurgentEngineering.csproj.FilesWrittenAbsolute.txt
+# File lists
+ExsurgentEngineering.csproj.*.txt
+
+# Project user subfile
+ExsurgentEngineering.csproj.user
+
+# VS2013 solution subfile
+ExsurgentEngineering.v12.suo
+
+# Build Cache
+ExsurgentEngineering/obj/*/*.cache
