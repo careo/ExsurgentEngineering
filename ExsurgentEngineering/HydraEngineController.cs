@@ -149,8 +149,7 @@ public class HydraEngineController : PartModule
 			return;
 
 		var sources = new List<PartResource> ();
-		part.GetConnectedResources (propellant.id, sources);
-
+        part.GetConnectedResources(propellant.id, propellant.GetFlowMode(), sources);
 		var maxAmt = 0d;
 		var currentAmt = 0d;
 		foreach (var source in sources) {
