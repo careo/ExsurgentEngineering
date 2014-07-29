@@ -59,7 +59,8 @@ namespace ExsurgentEngineering
         public static List<PartResource> GetConnectedResources(Part part, String resourceName)
         {
             var resources = new List<PartResource>();
-            part.GetConnectedResources(PartResourceLibrary.Instance.GetDefinition(resourceName).id, resources);
+            var resource = PartResourceLibrary.Instance.GetDefinition(resourceName);
+            part.GetConnectedResources(resource.id, resource.resourceFlowMode, resources);
             return resources;
         }
     }
